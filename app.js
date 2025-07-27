@@ -690,6 +690,14 @@ const BUILD_TIME = "{{BUILD_TIME}}"; // e.g. "2025-07-27 14:32:10"
   buildInfoDiv.style.fontSize = "12px";
   buildInfoDiv.style.fontFamily = "monospace";
   buildInfoDiv.style.opacity = "0.6";
-  buildInfoDiv.textContent = `Build: ${BUILD_TIME}`;
+  // Convert to local timezone for display
+  const localTimeStr = (() => {
+    if (!BUILD_TIME || BUILD_TIME.includes("{{BUILD_TIME}}")) return BUILD_TIME;
+    // Ensure timestamp ends with Z (UTC) if not already
+    const iso = BUILD_TIME.endsWith("Z") ? BUILD_TIME : BUILD_TIME + "Z";
+    const date = new Date(iso);
+    return date.toLocaleString();
+  })();
+  buildInfoDiv.textContent = `Build: ${localTimeStr}`;
   document.body.appendChild(buildInfoDiv);
 })();
