@@ -527,6 +527,15 @@ function playAlert(sound) {
 // Kick off the animation loop
 requestAnimationFrame(animate);
 
+// NEW – keep timers alive when the tab is in the background
+// Browsers pause requestAnimationFrame on hidden tabs. This lightweight
+// interval continues to tick timers and trigger their alerts so the sound
+// still plays even when you’re on another tab.
+setInterval(() => {
+  const now = performance.now();
+  timers.forEach((timer) => timer.tick(now));
+}, 1000); // once per second is plenty for minute-scale timers
+
 // Utility to check point in rect
 function contains(rect, px, py) {
   return (
