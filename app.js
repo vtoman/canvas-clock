@@ -693,8 +693,12 @@ const BUILD_TIME = "{{BUILD_TIME}}"; // e.g. "2025-07-27 14:32:10"
   // Convert to local timezone for display
   const localTimeStr = (() => {
     if (!BUILD_TIME || BUILD_TIME.includes("{{BUILD_TIME}}")) return BUILD_TIME;
-    // Ensure timestamp ends with Z (UTC) if not already
-    const iso = BUILD_TIME.endsWith("Z") ? BUILD_TIME : BUILD_TIME + "Z";
+    // If BUILD_TIME already includes a timezone offset (Z or ±hh:mm), keep it.
+    let iso = BUILD_TIME;
+    if (!/[Zz]|[+-]\d{2}:?\d{2}$/.test(BUILD_TIME)) {
+      // Assume UTC when no zone specified
+      iso += "Z";
+    }
     const date = new Date(iso);
     return date.toLocaleString();
   })();

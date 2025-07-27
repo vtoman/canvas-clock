@@ -22,8 +22,10 @@ jobs:
       # Inject build timestamp into JavaScript before deploying so the page shows
       # the exact build time instead of the {{BUILD_TIME}} placeholder.
       - name: Inject build timestamp
+        env:
+          TZ: Europe/Belgrade
         run: |
-          BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          BUILD_TIME=$(date +"%Y-%m-%dT%H:%M:%S%z")
           echo "Using BUILD_TIME=$BUILD_TIME"
           sed -i "s/{{BUILD_TIME}}/$BUILD_TIME/" app.js
       - name: Build And Deploy
@@ -51,3 +53,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_SALMON_BUSH_00C33D503 }}
           action: "close"
+          app_location: "/"
