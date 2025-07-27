@@ -149,10 +149,10 @@ const THEME_BUTTON_RECT = {
 // ----------------------------
 const SOUND_OPTIONS = [
   "internal",
-  "notification-sound-1.mp3",
-  "notification-sound-2.mp3",
-  "notification-sound-3.mp3",
-  "notification-sound-4.mp3",
+  "resources/notification-sound-1.mp3",
+  "resources/notification-sound-2.mp3",
+  "resources/notification-sound-3.mp3",
+  "resources/notification-sound-4.mp3",
 ];
 
 let storedSoundOpt = Number(localStorage.getItem("soundOptionIndex"));
