@@ -497,8 +497,31 @@ function playBeep() {
 
 // Play a sequence of beeps (default 3) separated by a given interval (ms)
 function playBeepSequence(count = 3, interval = 1000) {
-  for (let i = 0; i < count; i++) {
-    setTimeout(playBeep, i * interval);
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioCtx();
+    const duration = 0.3; // seconds per beep
+
+    for (let i = 0; i < count; i++) {
+      const startTime = audioCtx.currentTime + i * (interval / 1000);
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(440, startTime);
+      gainNode.gain.setValueAtTime(soundVolume, startTime);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration);
+    }
+  } catch (err) {
+    console.warn(
+      "Web Audio not supported or user gesture required for audio playback.",
+      err
+    );
   }
 }
 
@@ -652,3 +675,21 @@ function drawSoundButton() {
   );
   ctx.restore();
 }
+
+// ----------------------------
+// Build metadata (replace BUILD_TIME placeholder during release process)
+// ----------------------------
+const BUILD_TIME = "{{BUILD_TIME}}"; // e.g. "2025-07-27 14:32:10"
+
+(function attachBuildInfo() {
+  const buildInfoDiv = document.createElement("div");
+  buildInfoDiv.id = "build-info";
+  buildInfoDiv.style.position = "fixed";
+  buildInfoDiv.style.bottom = "5px";
+  buildInfoDiv.style.left = "10px";
+  buildInfoDiv.style.fontSize = "12px";
+  buildInfoDiv.style.fontFamily = "monospace";
+  buildInfoDiv.style.opacity = "0.6";
+  buildInfoDiv.textContent = `Build: ${BUILD_TIME}`;
+  document.body.appendChild(buildInfoDiv);
+})();
